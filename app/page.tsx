@@ -36,14 +36,30 @@ export default function Page() {
 
   // دالة لبدء الذكريات وتشغيل الموسيقى فوراً بعد تفاعل المستخدم
   const handleStart = () => {
-    setStarted(true)
-    // تشغيل الصوت برمجياً لتجنب حظر المتصفح للـ autoPlay
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current.play().catch(err => console.log("Audio play blocked:", err))
+  setStarted(true)
+  
+  // ننتظر جزء من الثانية حتى يتم رندر عنصر الـ audio في الصفحة ثم نشغله
+  setTimeout(() => {
+    if (audioRef.current) {
+      // إجبار المتصفح على تحميل الأغنية أولاً
+      audioRef.current.load(); 
+      
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => console.log("الموسيقى تعمل بنجاح!"))
+          .catch(err => {
+            console.log("المتصفح حظر التشغيل التلقائي:", err);
+            // حل بديل: لو حظرها المتصفح، ستعمل فوراً مع أول ضغطة للمستخدم على الشاشة
+            document.addEventListener('click', () => {
+              audioRef.current?.play();
+            }, { once: true });
+          });
       }
-    }, 100)
-  }
+    }
+  }, 200);
+}
 
   if (!started) {
     return (
