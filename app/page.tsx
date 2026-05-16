@@ -49,6 +49,7 @@ export default function Page() {
           <button
             onClick={() => {
            setStarted(true)
+          const audioRef = useRef<HTMLAudioElement | null>(null);
            }}
             className="px-8 py-4 bg-white text-black rounded-full hover:scale-105 transition-all"
           >
